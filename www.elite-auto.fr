@@ -1,0 +1,51 @@
+from distutils.command.build_scripts import first_line_re
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+from csv import writer
+list=list()
+for i in range(1,2):
+    url = "https://www.elite-auto.fr/recherche?pagination=14&paginationFrom=0&currentPage="+str(i)+"&availability=false&carsType=citadine"
+    text = requests.get(url)
+
+    doc = BeautifulSoup(text.content,'html.parser')
+
+
+    cars=doc.find_all("div", class_="w-100 h-100 p-3 card")
+    
+    for car in cars:
+           brand=car.find('p',class_='font-size-16 mt-2 mb-2').text
+           #print(brand)
+           detail=car.find('div',class_='mt-1')
+           model=detail.find('div').text.strip()
+           print(model)
+           detailCl=car.find('img',class_='lazyload icon-couleur')
+           color=detailCl['title']
+           print(color)
+           fuel_type=car.find('img',class_='lazyload svg-icon')
+           fuel=fuel_type['title'].value
+           print(fuel)
+           if car.find('div', class_='d-inline-block price-catalog nousContacter font-weight-bold') == None: 
+            pass
+           else:
+            price = car.find('div', class_='d-inline-block price-catalog nousContacter font-weight-bold').text.strip()
+            print(price)
+           data={'brand':brand, 'model':model,'color':color,'fuel_type':fuel_type,'price':price}
+           list.append(data)
+           
+
+           
+           
+    #df =pd.DataFrame(list)
+    #df.to_excel("cars_list.xlsx")
+    #print(df.head())
+
+          
+   
+
+           
+
+    
+           
+           
+           
